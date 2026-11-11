@@ -1,36 +1,515 @@
 {
   "supers": {
-    "alimerka":  { "nombre": "Alimerka",  "color": "#2e9d47" },
-    "lupa":      { "nombre": "Lupa",      "color": "#e04e1b" },
-    "mercadona": { "nombre": "Mercadona", "color": "#1d8a3e" },
-    "carrefour": { "nombre": "Carrefour", "color": "#1d5fb5" },
-    "dia":       { "nombre": "Dia",       "color": "#d81e2c" },
-    "alcampo":   { "nombre": "Alcampo",   "color": "#c8102e" },
-    "eroski":    { "nombre": "Eroski",    "color": "#e2231a" },
-    "lidl":      { "nombre": "Lidl",      "color": "#0b4fa8" }
+    "alimerka": {
+      "nombre": "Alimerka",
+      "color": "#2e9d47",
+      "zonas": [
+        "Asturias",
+        "León",
+        "Valladolid",
+        "Zamora",
+        "Palencia",
+        "Lugo"
+      ],
+      "nota": "Asturias + 4 provincias de CyL + presencia testimonial en Galicia. Revisar provincias exactas."
+    },
+    "lupa": {
+      "nombre": "Lupa",
+      "color": "#e04e1b",
+      "zonas": [
+        "Cantabria",
+        "Castilla y León",
+        "La Rioja",
+        "Navarra"
+      ],
+      "nota": "Revisar si hay tiendas en Asturias o País Vasco."
+    },
+    "mercadona": {
+      "nombre": "Mercadona",
+      "color": "#1d8a3e",
+      "zonas": [
+        "*"
+      ],
+      "excepto": [
+        "Ceuta",
+        "Melilla"
+      ]
+    },
+    "carrefour": {
+      "nombre": "Carrefour",
+      "color": "#1d5fb5",
+      "zonas": [
+        "*"
+      ]
+    },
+    "dia": {
+      "nombre": "Dia",
+      "color": "#d81e2c",
+      "zonas": [
+        "*"
+      ]
+    },
+    "alcampo": {
+      "nombre": "Alcampo",
+      "color": "#c8102e",
+      "zonas": [
+        "*"
+      ],
+      "excepto": [
+        "Canarias",
+        "Illes Balears",
+        "Ceuta",
+        "Melilla"
+      ],
+      "nota": "Cobertura aproximada."
+    },
+    "eroski": {
+      "nombre": "Eroski",
+      "color": "#e2231a",
+      "zonas": [
+        "País Vasco",
+        "Comunidad Foral de Navarra",
+        "La Rioja",
+        "Galicia",
+        "Illes Balears",
+        "Cantabria",
+        "Aragón",
+        "Cataluña",
+        "Castilla y León",
+        "Principado de Asturias",
+        "Comunidad de Madrid",
+        "Castilla-La Mancha",
+        "Comunitat Valenciana",
+        "Región de Murcia"
+      ],
+      "nota": "Cobertura aproximada."
+    },
+    "lidl": {
+      "nombre": "Lidl",
+      "color": "#0b4fa8",
+      "zonas": [
+        "*"
+      ],
+      "excepto": [
+        "Ceuta",
+        "Melilla"
+      ]
+    }
   },
   "ciudades": {
-    "Madrid":     { "provincia": "Comunidad de Madrid",  "supers": ["mercadona","carrefour","dia","lidl","alcampo"] },
-    "Barcelona":  { "provincia": "Cataluña",             "supers": ["mercadona","carrefour","dia","lidl","alcampo"] },
-    "Valladolid": { "provincia": "Castilla y León",      "supers": ["alimerka","lupa","mercadona","carrefour","dia","alcampo","eroski","lidl"] },
-    "León":       { "provincia": "Castilla y León",      "supers": ["alimerka","lupa","mercadona","carrefour","dia","eroski","lidl"] },
-    "Oviedo":     { "provincia": "Asturias",             "supers": ["alimerka","lupa","mercadona","carrefour","dia","alcampo","lidl"] },
-    "Gijón":      { "provincia": "Asturias",             "supers": ["alimerka","mercadona","carrefour","dia","alcampo","lidl"] },
-    "Santander":  { "provincia": "Cantabria",            "supers": ["lupa","mercadona","carrefour","dia","eroski","lidl"] },
-    "Bilbao":     { "provincia": "País Vasco",           "supers": ["mercadona","carrefour","dia","eroski","lidl"] },
-    "Valencia":   { "provincia": "Comunitat Valenciana", "supers": ["mercadona","carrefour","dia","alcampo","lidl"] },
-    "Sevilla":    { "provincia": "Andalucía",            "supers": ["mercadona","carrefour","dia","alcampo","lidl"] }
+    "Almería": {
+      "provincia": "Almería",
+      "comunidad": "Andalucía"
+    },
+    "Roquetas de Mar": {
+      "provincia": "Almería",
+      "comunidad": "Andalucía"
+    },
+    "Cádiz": {
+      "provincia": "Cádiz",
+      "comunidad": "Andalucía"
+    },
+    "Jerez de la Frontera": {
+      "provincia": "Cádiz",
+      "comunidad": "Andalucía"
+    },
+    "Algeciras": {
+      "provincia": "Cádiz",
+      "comunidad": "Andalucía"
+    },
+    "Córdoba": {
+      "provincia": "Córdoba",
+      "comunidad": "Andalucía"
+    },
+    "Granada": {
+      "provincia": "Granada",
+      "comunidad": "Andalucía"
+    },
+    "Huelva": {
+      "provincia": "Huelva",
+      "comunidad": "Andalucía"
+    },
+    "Jaén": {
+      "provincia": "Jaén",
+      "comunidad": "Andalucía"
+    },
+    "Málaga": {
+      "provincia": "Málaga",
+      "comunidad": "Andalucía"
+    },
+    "Marbella": {
+      "provincia": "Málaga",
+      "comunidad": "Andalucía"
+    },
+    "Sevilla": {
+      "provincia": "Sevilla",
+      "comunidad": "Andalucía"
+    },
+    "Dos Hermanas": {
+      "provincia": "Sevilla",
+      "comunidad": "Andalucía"
+    },
+    "Huesca": {
+      "provincia": "Huesca",
+      "comunidad": "Aragón"
+    },
+    "Teruel": {
+      "provincia": "Teruel",
+      "comunidad": "Aragón"
+    },
+    "Zaragoza": {
+      "provincia": "Zaragoza",
+      "comunidad": "Aragón"
+    },
+    "Oviedo": {
+      "provincia": "Asturias",
+      "comunidad": "Principado de Asturias"
+    },
+    "Gijón": {
+      "provincia": "Asturias",
+      "comunidad": "Principado de Asturias"
+    },
+    "Avilés": {
+      "provincia": "Asturias",
+      "comunidad": "Principado de Asturias"
+    },
+    "Palma": {
+      "provincia": "Illes Balears",
+      "comunidad": "Illes Balears"
+    },
+    "Las Palmas de Gran Canaria": {
+      "provincia": "Las Palmas",
+      "comunidad": "Canarias"
+    },
+    "Telde": {
+      "provincia": "Las Palmas",
+      "comunidad": "Canarias"
+    },
+    "Santa Cruz de Tenerife": {
+      "provincia": "Santa Cruz de Tenerife",
+      "comunidad": "Canarias"
+    },
+    "San Cristóbal de La Laguna": {
+      "provincia": "Santa Cruz de Tenerife",
+      "comunidad": "Canarias"
+    },
+    "Santander": {
+      "provincia": "Cantabria",
+      "comunidad": "Cantabria"
+    },
+    "Torrelavega": {
+      "provincia": "Cantabria",
+      "comunidad": "Cantabria"
+    },
+    "Albacete": {
+      "provincia": "Albacete",
+      "comunidad": "Castilla-La Mancha"
+    },
+    "Ciudad Real": {
+      "provincia": "Ciudad Real",
+      "comunidad": "Castilla-La Mancha"
+    },
+    "Cuenca": {
+      "provincia": "Cuenca",
+      "comunidad": "Castilla-La Mancha"
+    },
+    "Guadalajara": {
+      "provincia": "Guadalajara",
+      "comunidad": "Castilla-La Mancha"
+    },
+    "Toledo": {
+      "provincia": "Toledo",
+      "comunidad": "Castilla-La Mancha"
+    },
+    "Ávila": {
+      "provincia": "Ávila",
+      "comunidad": "Castilla y León"
+    },
+    "Burgos": {
+      "provincia": "Burgos",
+      "comunidad": "Castilla y León"
+    },
+    "León": {
+      "provincia": "León",
+      "comunidad": "Castilla y León"
+    },
+    "Ponferrada": {
+      "provincia": "León",
+      "comunidad": "Castilla y León"
+    },
+    "Palencia": {
+      "provincia": "Palencia",
+      "comunidad": "Castilla y León"
+    },
+    "Salamanca": {
+      "provincia": "Salamanca",
+      "comunidad": "Castilla y León"
+    },
+    "Segovia": {
+      "provincia": "Segovia",
+      "comunidad": "Castilla y León"
+    },
+    "Soria": {
+      "provincia": "Soria",
+      "comunidad": "Castilla y León"
+    },
+    "Valladolid": {
+      "provincia": "Valladolid",
+      "comunidad": "Castilla y León"
+    },
+    "Zamora": {
+      "provincia": "Zamora",
+      "comunidad": "Castilla y León"
+    },
+    "Barcelona": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "L'Hospitalet de Llobregat": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Badalona": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Terrassa": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Sabadell": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Mataró": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Santa Coloma de Gramenet": {
+      "provincia": "Barcelona",
+      "comunidad": "Cataluña"
+    },
+    "Girona": {
+      "provincia": "Girona",
+      "comunidad": "Cataluña"
+    },
+    "Lleida": {
+      "provincia": "Lleida",
+      "comunidad": "Cataluña"
+    },
+    "Tarragona": {
+      "provincia": "Tarragona",
+      "comunidad": "Cataluña"
+    },
+    "Reus": {
+      "provincia": "Tarragona",
+      "comunidad": "Cataluña"
+    },
+    "Alicante": {
+      "provincia": "Alicante",
+      "comunidad": "Comunitat Valenciana"
+    },
+    "Elche": {
+      "provincia": "Alicante",
+      "comunidad": "Comunitat Valenciana"
+    },
+    "Torrevieja": {
+      "provincia": "Alicante",
+      "comunidad": "Comunitat Valenciana"
+    },
+    "Castellón de la Plana": {
+      "provincia": "Castellón",
+      "comunidad": "Comunitat Valenciana"
+    },
+    "Valencia": {
+      "provincia": "Valencia",
+      "comunidad": "Comunitat Valenciana"
+    },
+    "Badajoz": {
+      "provincia": "Badajoz",
+      "comunidad": "Extremadura"
+    },
+    "Mérida": {
+      "provincia": "Badajoz",
+      "comunidad": "Extremadura"
+    },
+    "Cáceres": {
+      "provincia": "Cáceres",
+      "comunidad": "Extremadura"
+    },
+    "A Coruña": {
+      "provincia": "A Coruña",
+      "comunidad": "Galicia"
+    },
+    "Santiago de Compostela": {
+      "provincia": "A Coruña",
+      "comunidad": "Galicia"
+    },
+    "Ferrol": {
+      "provincia": "A Coruña",
+      "comunidad": "Galicia"
+    },
+    "Lugo": {
+      "provincia": "Lugo",
+      "comunidad": "Galicia"
+    },
+    "Ourense": {
+      "provincia": "Ourense",
+      "comunidad": "Galicia"
+    },
+    "Pontevedra": {
+      "provincia": "Pontevedra",
+      "comunidad": "Galicia"
+    },
+    "Vigo": {
+      "provincia": "Pontevedra",
+      "comunidad": "Galicia"
+    },
+    "Madrid": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Alcalá de Henares": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Alcobendas": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Alcorcón": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Fuenlabrada": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Getafe": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Leganés": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Móstoles": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Parla": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Torrejón de Ardoz": {
+      "provincia": "Madrid",
+      "comunidad": "Comunidad de Madrid"
+    },
+    "Murcia": {
+      "provincia": "Murcia",
+      "comunidad": "Región de Murcia"
+    },
+    "Cartagena": {
+      "provincia": "Murcia",
+      "comunidad": "Región de Murcia"
+    },
+    "Lorca": {
+      "provincia": "Murcia",
+      "comunidad": "Región de Murcia"
+    },
+    "Pamplona": {
+      "provincia": "Navarra",
+      "comunidad": "Comunidad Foral de Navarra"
+    },
+    "Vitoria-Gasteiz": {
+      "provincia": "Álava",
+      "comunidad": "País Vasco"
+    },
+    "Bilbao": {
+      "provincia": "Bizkaia",
+      "comunidad": "País Vasco"
+    },
+    "Barakaldo": {
+      "provincia": "Bizkaia",
+      "comunidad": "País Vasco"
+    },
+    "San Sebastián": {
+      "provincia": "Gipuzkoa",
+      "comunidad": "País Vasco"
+    },
+    "Logroño": {
+      "provincia": "La Rioja",
+      "comunidad": "La Rioja"
+    },
+    "Ceuta": {
+      "provincia": "Ceuta",
+      "comunidad": "Ceuta"
+    },
+    "Melilla": {
+      "provincia": "Melilla",
+      "comunidad": "Melilla"
+    }
   },
   "productos": [
-    { "id": "leche",      "nombre": "Leche entera 1 L",               "emoji": "🥛", "categoria": "Lácteos" },
-    { "id": "yogur",      "nombre": "Yogur natural pack 4",           "emoji": "🥣", "categoria": "Lácteos" },
-    { "id": "huevos",     "nombre": "Huevos L docena",                "emoji": "🥚", "categoria": "Frescos" },
-    { "id": "pollo",      "nombre": "Pechuga de pollo 1 kg",          "emoji": "🍗", "categoria": "Frescos" },
-    { "id": "platano",    "nombre": "Plátano de Canarias 1 kg",       "emoji": "🍌", "categoria": "Fruta y verdura" },
-    { "id": "pan",        "nombre": "Pan de molde integral",          "emoji": "🍞", "categoria": "Despensa" },
-    { "id": "aceite",     "nombre": "Aceite de oliva virgen extra 1 L","emoji": "🫒", "categoria": "Despensa" },
-    { "id": "arroz",      "nombre": "Arroz redondo 1 kg",             "emoji": "🍚", "categoria": "Despensa" },
-    { "id": "macarrones", "nombre": "Macarrones 500 g",               "emoji": "🍝", "categoria": "Despensa" },
-    { "id": "cafe",       "nombre": "Café molido 250 g",              "emoji": "☕", "categoria": "Despensa" }
+    {
+      "id": "leche",
+      "nombre": "Leche entera 1 L",
+      "emoji": "🥛",
+      "categoria": "Lácteos"
+    },
+    {
+      "id": "yogur",
+      "nombre": "Yogur natural pack 4",
+      "emoji": "🥣",
+      "categoria": "Lácteos"
+    },
+    {
+      "id": "huevos",
+      "nombre": "Huevos L docena",
+      "emoji": "🥚",
+      "categoria": "Frescos"
+    },
+    {
+      "id": "pollo",
+      "nombre": "Pechuga de pollo 1 kg",
+      "emoji": "🍗",
+      "categoria": "Frescos"
+    },
+    {
+      "id": "platano",
+      "nombre": "Plátano de Canarias 1 kg",
+      "emoji": "🍌",
+      "categoria": "Fruta y verdura"
+    },
+    {
+      "id": "pan",
+      "nombre": "Pan de molde integral",
+      "emoji": "🍞",
+      "categoria": "Despensa"
+    },
+    {
+      "id": "aceite",
+      "nombre": "Aceite de oliva virgen extra 1 L",
+      "emoji": "🫒",
+      "categoria": "Despensa"
+    },
+    {
+      "id": "arroz",
+      "nombre": "Arroz redondo 1 kg",
+      "emoji": "🍚",
+      "categoria": "Despensa"
+    },
+    {
+      "id": "macarrones",
+      "nombre": "Macarrones 500 g",
+      "emoji": "🍝",
+      "categoria": "Despensa"
+    },
+    {
+      "id": "cafe",
+      "nombre": "Café molido 250 g",
+      "emoji": "☕",
+      "categoria": "Despensa"
+    }
   ]
 }
