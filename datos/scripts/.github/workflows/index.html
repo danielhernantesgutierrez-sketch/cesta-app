@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cesta · Comparador de supermercados</title>
+<style>
+  :root{
+    --bg:#f3f5f2; --card:#ffffff; --ink:#18261e; --muted:#6c7b72; --line:#e2e8e4;
+    --brand:#0e8a5d; --brand-soft:#e5f4ec; --danger:#d64545; --offer:#e8590c;
+    --radius:18px; --shadow:0 2px 10px rgba(20,40,30,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#cfd8d2;color:var(--ink);
+       display:flex;justify-content:center;align-items:center;min-height:100vh}
+  button{font-family:inherit;cursor:pointer}
+
+  .phone{width:390px;height:800px;background:var(--bg);border:11px solid #121513;border-radius:48px;
+         position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+  @media (max-width:460px){
+    body{background:var(--bg)}
+    .phone{width:100vw;height:100dvh;border:0;border-radius:0;box-shadow:none}
+    .notch{display:none}
+  }
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#121513;
+         border-radius:0 0 16px 16px;z-index:50}
+  .statusbar{height:36px;flex-shrink:0;display:flex;justify-content:space-between;align-items:flex-end;
+             padding:0 26px 4px;font-size:13px;font-weight:600}
+
+  header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 18px 12px;gap:10px}
+  header h1{font-size:22px;letter-spacing:-.3px}
+  .city-chip{display:flex;align-items:center;gap:5px;border:none;background:var(--brand-soft);color:var(--brand);
+             font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  main{flex:1;overflow-y:auto;padding:0 16px 20px;scroll-behavior:smooth}
+  main::-webkit-scrollbar{width:0}
+
+  nav{flex-shrink:0;height:76px;background:#fff;border-top:1px solid var(--line);display:flex;
+      justify-content:space-around;align-items:center;padding-bottom:8px}
+  nav button{position:relative;width:68px;height:50px;border:none;background:none;border-radius:18px;color:#9aa69f;
+             display:flex;align-items:center;justify-content:center;transition:.2s}
+  nav button svg{width:27px;height:27px}
+  nav button.active{background:var(--brand-soft);color:var(--brand)}
+  nav button:active{transform:scale(.92)}
+  .nav-badge{position:absolute;top:3px;right:9px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+             background:var(--danger);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .nav-badge:empty{display:none}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:16px 4px 10px}
+  .note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.5}
+  .logo{width:46px;height:46px;border-radius:14px;color:#fff;font-weight:800;font-size:20px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+  .logo.sm{width:22px;height:22px;border-radius:7px;font-size:11px}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty .big{font-size:60px;margin-bottom:12px}
+  .empty h3{color:var(--ink);margin-bottom:6px}
+  .btn{border:none;background:var(--brand);color:#fff;font-weight:700;padding:12px 18px;border-radius:14px;font-size:14px}
+  .loading{text-align:center;padding:90px 20px;color:var(--muted)}
+
+  .overlay{position:absolute;inset:0;background:var(--bg);z-index:40;display:flex;flex-direction:column;
+           transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .overlay.open{transform:translateY(0)}
+  .city-hero{padding:56px 22px 18px;background:linear-gradient(160deg,#0e8a5d,#16a571);color:#fff;border-radius:0 0 28px 28px}
+  .city-hero .pin{font-size:38px}
+  .city-hero h2{font-size:25px;margin:8px 0 4px}
+  .city-hero p{opacity:.9;font-size:14px}
+  .city-close{position:absolute;top:44px;right:18px;border:none;background:rgba(255,255,255,.2);color:#fff;
+              width:34px;height:34px;border-radius:50%;font-size:18px}
+  .city-list{flex:1;overflow-y:auto;padding:4px 16px 24px}
+  .city-item{width:100%;display:flex;align-items:center;gap:12px;border:2px solid transparent;padding:14px;margin-bottom:10px;text-align:left}
+  .city-item.sel{border-color:var(--brand)}
+  .city-item .ci-name{font-weight:700;font-size:16px}
+  .city-item .ci-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .city-item .ci-dots{display:flex;gap:3px;margin-left:auto;flex-shrink:0}
+  .city-item .ci-dots span{width:9px;height:9px;border-radius:50%}
+
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:0 12px;height:46px}
+  .search:focus-within{border-color:var(--brand)}
+  .search input{flex:1;border:none;outline:none;font-size:15px;background:none;color:var(--ink)}
+  .search .clear{border:none;background:#e9eeeb;width:22px;height:22px;border-radius:50%;font-size:12px;color:var(--muted);display:none}
+  .search .clear.show{display:block}
+
+  .store-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .store-card{border:none;padding:16px 14px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:transform .15s}
+  .store-card:active{transform:scale(.97)}
+  .store-card .s-name{font-weight:800;font-size:15.5px}
+  .store-card .s-meta{font-size:12px;color:var(--muted)}
+  .store-card .s-offers{font-size:11.5px;font-weight:700;color:var(--offer)}
+  .store-card.off{opacity:.45;cursor:not-allowed;filter:grayscale(.8)}
+
+  .store-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .back{border:none;background:#fff;width:40px;height:40px;border-radius:12px;font-size:22px;box-shadow:var(--shadow);flex-shrink:0}
+  .store-head h2{font-size:19px}
+  .store-head small{color:var(--muted);font-size:12.5px}
+  .chips{display:flex;gap:8px;overflow-x:auto;margin:12px -16px 4px;padding:0 16px 4px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;border:1.5px solid var(--line);background:#fff;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted)}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  .prod{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:10px}
+  .prod .emo{width:48px;height:48px;border-radius:14px;background:#f1f4f2;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .prod .info{flex:1;min-width:0}
+  .prod .pname{font-weight:650;font-size:14.5px;line-height:1.25}
+  .prod .pcat{font-size:12px;color:var(--muted);margin-top:2px}
+  .price{font-weight:800;font-size:15.5px;margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .price s{font-weight:500;font-size:12px;color:var(--muted)}
+  .tag-offer{background:#fff1e6;color:var(--offer);font-size:10.5px;font-weight:800;padding:2px 6px;border-radius:6px}
+  .add{border:none;width:40px;height:40px;border-radius:12px;background:var(--brand);color:#fff;font-size:22px;flex-shrink:0}
+  .add:active{transform:scale(.9)}
+  .stepper{display:flex;align-items:center;background:var(--brand-soft);border-radius:12px;flex-shrink:0}
+  .stepper button{border:none;background:none;width:32px;height:38px;font-size:18px;font-weight:700;color:var(--brand)}
+  .stepper span{min-width:20px;text-align:center;font-weight:800;color:var(--brand)}
+
+  .li{display:flex;gap:12px;padding:12px;margin-bottom:10px;align-items:center}
+  .li .store-line{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:3px}
+  .li .unit{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .li .right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .li .sub{font-weight:800;font-size:15px}
+  .trash{border:none;background:none;font-size:16px;opacity:.6;padding:4px}
+  .warn{font-size:11px;color:var(--offer);font-weight:700}
+  .total-bar{position:sticky;bottom:0;margin-top:14px;padding:16px 18px;background:var(--ink);color:#fff;border-radius:var(--radius);
+             display:flex;justify-content:space-between;align-items:center;box-shadow:0 -6px 20px rgba(243,245,242,.9)}
+  .total-bar small{opacity:.7;font-size:12px;display:block}
+  .total-bar .tot{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .pulse{animation:pulse .35s ease}
+  @keyframes pulse{50%{transform:scale(1.08)}}
+
+  .winner{padding:20px;background:linear-gradient(150deg,#0e8a5d,#18b077);color:#fff;border-radius:22px;box-shadow:0 10px 24px rgba(14,138,93,.3)}
+  .winner .lbl{font-size:12.5px;font-weight:700;opacity:.9;text-transform:uppercase;letter-spacing:.6px}
+  .winner .row{display:flex;align-items:center;gap:12px;margin:12px 0}
+  .winner .logo{border:2px solid rgba(255,255,255,.6)}
+  .winner h2{font-size:22px}
+  .winner .big{font-size:34px;font-weight:800;letter-spacing:-1px}
+  .save-box{background:rgba(255,255,255,.16);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px;line-height:1.45}
+  .save-box b{font-size:18px}
+  .winner .btn{background:#fff;color:var(--brand);width:100%;margin-top:14px}
+  .rank{padding:14px;margin-bottom:10px}
+  .rank .top{display:flex;align-items:center;gap:10px}
+  .rank .pos{width:24px;font-weight:800;color:var(--muted);text-align:center}
+  .rank .nm{flex:1;font-weight:700}
+  .rank .amt{font-weight:800}
+  .rank .diff{font-size:12px;color:var(--danger);font-weight:700;text-align:right}
+  .rank .diff.best{color:var(--brand)}
+  .rank.first{outline:2px solid var(--brand)}
+  .rank.incomplete{opacity:.65}
+  .missing{font-size:11.5px;color:var(--offer);font-weight:700;margin-top:8px}
+  .bar{height:8px;background:#edf1ee;border-radius:5px;margin-top:10px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:5px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+  .toast{position:absolute;left:50%;bottom:92px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;
+         border-radius:12px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+  <div class="notch"></div>
+  <div class="statusbar"><span id="clock">9:41</span><span>📶 🔋</span></div>
+
+  <header>
+    <h1 id="title">Supermercados</h1>
+    <button class="city-chip" id="cityChip" onclick="openCity(true)">📍 <span id="cityName">—</span> ▾</button>
+  </header>
+
+  <main id="main"></main>
+
+  <nav>
+    <button id="nav-catalog" class="active" aria-label="Supermercados" onclick="goTab('catalog')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l1.6-5h14.8L21 9"/><path d="M3 9a3 3 0 0 0 6 0a3 3 0 0 0 6 0a3 3 0 0 0 6 0"/>
+        <path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/>
+      </svg>
+    </button>
+    <button id="nav-list" aria-label="Mi lista" onclick="goTab('list')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/>
+        <path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L22 7H6"/>
+      </svg>
+      <span class="nav-badge" id="badge"></span>
+    </button>
+    <button id="nav-compare" aria-label="Comparador de precios" onclick="goTab('compare')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/>
+        <path d="M11.5 9.2a2.2 2.2 0 1 0 0 3.6"/><path d="M8.3 10.3h3M8.3 11.7h3"/>
+      </svg>
+    </button>
+  </nav>
+
+  <div class="overlay" id="cityOverlay">
+    <div class="city-hero">
+      <button class="city-close" id="cityClose" onclick="openCity(false)" aria-label="Cerrar">✕</button>
+      <div class="pin">📍</div>
+      <h2>¿Dónde haces la compra?</h2>
+      <p>Elige tu ciudad para ver supermercados, precios y ofertas de tu zona.</p>
+    </div>
+    <div style="padding:14px 16px 0">
+      <div class="search">🔍<input id="citySearch" placeholder="Buscar ciudad, provincia o comunidad" oninput="renderCities()"></div>
+    </div>
+    <div class="city-list" id="cityList"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ===== DATOS: se cargan de precios.json (generado cada día por GitHub Actions) ===== */
+let STORES = {}, STORE_ORDER = [], CITIES = {}, PRODUCTS = [], P = {}, CATEGORIES = ['Todas'], PRICES = {}, UPDATED = null;
+
+async function loadData(){
+  const res = await fetch('precios.json?v=' + Date.now());
+  if (!res.ok) throw new Error('precios.json no encontrado (HTTP ' + res.status + ')');
+  const d = await res.json();
+  STORES = {}; for (const [id, s] of Object.entries(d.supers)) STORES[id] = { name: s.nombre, color: s.color };
+  STORE_ORDER = Object.keys(STORES);
+  CITIES = {}; for (const [n, c] of Object.entries(d.ciudades)) CITIES[n] = { prov: c.provincia + (c.comunidad && c.comunidad !== c.provincia ? ' · ' + c.comunidad : ''), com: c.comunidad || 'Otras', stores: c.supers || [] };
+  PRODUCTS = d.productos.map(p => ({ id: p.id, n: p.nombre, e: p.emoji || '🛍️', c: p.categoria || 'Otros' }));
+  P = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
+  CATEGORIES = ['Todas', ...new Set(PRODUCTS.map(p => p.c))];
+  PRICES = d.precios; UPDATED = d.actualizado;
+}
+function priceInfo(pid, sid, city){
+  const x = PRICES[city]?.[sid]?.[pid];
+  return x ? { price: x.p, regular: x.r, offer: x.p < x.r } : null;
+}
+function storeProducts(sid){ return PRODUCTS.filter(p => priceInfo(p.id, sid, state.city)); }
+
+const r2 = n => Math.round(n * 100) / 100;
+const eur = n => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+const fecha = iso => iso ? new Date(iso).toLocaleString('es-ES', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '—';
+const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+/* ===== ESTADO ===== */
+const state = { city: null, tab: 'catalog', store: null, query: '', cat: 'Todas', cart: [] };
+function save(){ try{ localStorage.setItem('cesta-app', JSON.stringify({ city: state.city, cart: state.cart })); }catch(e){} }
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem('cesta-app') || 'null');
+    if (d && CITIES[d.city]) state.city = d.city;
+    if (d && Array.isArray(d.cart)) state.cart = d.cart.filter(i => P[i.pid] && STORES[i.sid]);
+  }catch(e){}
+}
+const cityStores = () => STORE_ORDER.filter(s => CITIES[state.city].stores.includes(s));
+
+/* ===== CIUDAD ===== */
+function openCity(open){
+  document.getElementById('cityClose').style.display = state.city ? 'block' : 'none';
+  if (open){ document.getElementById('citySearch').value = ''; renderCities(); }
+  document.getElementById('cityOverlay').classList.toggle('open', open);
+}
+function renderCities(){
+  const q = norm(document.getElementById('citySearch').value.trim());
+  const grupos = {};
+  Object.entries(CITIES)
+    .filter(([n, c]) => norm(n + ' ' + c.prov).includes(q))
+    .sort(([a], [b]) => a.localeCompare(b, 'es'))
+    .forEach(([n, c]) => (grupos[c.com] ||= []).push([n, c]));
+  const html = Object.keys(grupos).sort((a, b) => a.localeCompare(b, 'es')).map(com =>
+    `<div class="section-title">${com}</div>` + grupos[com].map(([n, c]) => `
+      <button class="card city-item ${n === state.city ? 'sel' : ''}" data-c="${n}" onclick="setCity(this.dataset.c)">
+        <div><div class="ci-name">${n}</div><div class="ci-sub">${c.prov} · ${c.stores.length} supermercados</div></div>
+        <div class="ci-dots">${STORE_ORDER.filter(s => c.stores.includes(s)).map(s => `<span style="background:${STORES[s].color}" title="${STORES[s].name}"></span>`).join('')}</div>
+      </button>`).join('')
+  ).join('');
+  document.getElementById('cityList').innerHTML = html || '<div class="empty">Sin resultados</div>';
+}
+function cheapestStore(pid, city){
+  let best = null, bp = Infinity;
+  for (const s of CITIES[city].stores){ const pi = priceInfo(pid, s, city); if (pi && pi.price < bp){ bp = pi.price; best = s; } }
+  return best;
+}
+function setCity(name){
+  const prev = state.city;
+  state.city = name; state.store = null; state.query = ''; state.cat = 'Todas';
+  let moved = 0;
+  state.cart.forEach(i => { if (!priceInfo(i.pid, i.sid, name)){ const b = cheapestStore(i.pid, name); if (b){ i.sid = b; moved++; } } });
+  mergeCart(); save(); openCity(false); render();
+  if (prev && prev !== name) toast(moved ? `📍 ${name}: ${moved} producto(s) movidos a otro súper` : `📍 Precios de ${name}`);
+}
+
+/* ===== CARRITO ===== */
+function mergeCart(){
+  const m = {};
+  state.cart.forEach(i => { const k = i.pid + '|' + i.sid; m[k] ? m[k].qty += i.qty : m[k] = { ...i }; });
+  state.cart = Object.values(m);
+}
+function qtyOf(pid, sid){ const it = state.cart.find(i => i.pid === pid && i.sid === sid); return it ? it.qty : 0; }
+function setQty(pid, sid, qty){
+  const idx = state.cart.findIndex(i => i.pid === pid && i.sid === sid);
+  if (qty <= 0){ if (idx > -1) state.cart.splice(idx, 1); }
+  else if (idx > -1) state.cart[idx].qty = qty;
+  else { state.cart.push({ pid, sid, qty }); toast(`🛒 ${P[pid].n} añadido`); }
+  save(); updateBadge();
+}
+function cartTotal(){ return state.cart.reduce((t, i) => { const pi = priceInfo(i.pid, i.sid, state.city); return t + (pi ? pi.price * i.qty : 0); }, 0); }
+function cartUnits(){ return state.cart.reduce((t, i) => t + i.qty, 0); }
+function updateBadge(){ const n = cartUnits(); document.getElementById('badge').textContent = n ? (n > 99 ? '99+' : n) : ''; }
+
+/* ===== RENDER ===== */
+const TITLES = { catalog: 'Supermercados', list: 'Mi lista', compare: 'Comparador' };
+function goTab(t){ state.tab = t; if (t !== 'catalog') state.store = null; render(); }
+function render(){
+  document.getElementById('cityName').textContent = state.city || '—';
+  document.getElementById('title').textContent = TITLES[state.tab];
+  ['catalog', 'list', 'compare'].forEach(t => document.getElementById('nav-' + t).classList.toggle('active', state.tab === t));
+  updateBadge();
+  const main = document.getElementById('main'); main.scrollTop = 0;
+  if (!state.city){ main.innerHTML = ''; return; }
+  if (state.tab === 'catalog') state.store ? renderStore() : renderStores();
+  if (state.tab === 'list') renderList();
+  if (state.tab === 'compare') renderCompare();
+}
+
+/* Pestaña 1: supermercados */
+function renderStores(){
+  const avail = cityStores();
+  const card = (sid, on) => {
+    const s = STORES[sid], prods = on ? storeProducts(sid) : [];
+    const offers = prods.filter(p => priceInfo(p.id, sid, state.city).offer).length;
+    const meta = !on ? 'No disponible en ' + state.city : prods.length ? prods.length + ' productos' : 'Sin precios todavía';
+    return `
+      <button class="card store-card ${on ? '' : 'off'}" ${on ? `onclick="openStore('${sid}')"` : 'disabled'}>
+        <div class="logo" style="background:${s.color}">${s.name[0]}</div>
+        <div><div class="s-name">${s.name}</div><div class="s-meta">${meta}</div></div>
+        ${offers ? `<div class="s-offers">🔥 ${offers} ofertas</div>` : ''}
+      </button>`;
+  };
+  const off = STORE_ORDER.filter(s => !avail.includes(s));
+  document.getElementById('main').innerHTML = `
+    <div class="section-title">Disponibles en ${state.city} · ${avail.length}</div>
+    <div class="store-grid">${avail.map(s => card(s, true)).join('')}</div>
+    ${off.length ? `<div class="section-title">No presentes en tu zona</div><div class="store-grid">${off.map(s => card(s, false)).join('')}</div>` : ''}
+    <p class="note">🕒 Precios actualizados: ${fecha(UPDATED)}</p>`;
+}
+function openStore(sid){ state.store = sid; state.query = ''; state.cat = 'Todas'; render(); }
+function renderStore(){
+  const s = STORES[state.store];
+  document.getElementById('main').innerHTML = `
+    <div class="store-head">
+      <button class="back" onclick="state.store=null;render()" aria-label="Volver">‹</button>
+      <div class="logo" style="background:${s.color}">${s.name[0]}</div>
+      <div><h2>${s.name}</h2><small>Precios en ${state.city}</small></div>
+    </div>
+    <div class="search">
+      🔍<input id="q" placeholder="Buscar en ${s.name}…" value="${state.query}" autocomplete="off" oninput="state.query=this.value;renderProducts()">
+      <button class="clear" id="qClear" onclick="state.query='';document.getElementById('q').value='';renderProducts();document.getElementById('q').focus()">✕</button>
+    </div>
+    <div class="chips">${CATEGORIES.map(c => `<button class="chip ${c === state.cat ? 'on' : ''}" onclick="state.cat='${c}';renderStore()">${c}</button>`).join('')}</div>
+    <div id="plist" style="margin-top:10px"></div>`;
+  renderProducts();
+}
+function renderProducts(){
+  const q = norm(state.query.trim());
+  document.getElementById('qClear').classList.toggle('show', !!q);
+  const list = storeProducts(state.store).filter(p => (state.cat === 'Todas' || p.c === state.cat) && norm(p.n).includes(q));
+  document.getElementById('plist').innerHTML = list.length ? list.map(p => {
+    const pi = priceInfo(p.id, state.store, state.city), qty = qtyOf(p.id, state.store);
+    const pct = pi.offer ? Math.round((1 - pi.price / pi.regular) * 100) : 0;
+    return `
+      <div class="card prod">
+        <div class="emo">${p.e}</div>
+        <div class="info">
+          <div class="pname">${p.n}</div><div class="pcat">${p.c}</div>
+          <div class="price">${eur(pi.price)} ${pi.offer ? `<s>${eur(pi.regular)}</s><span class="tag-offer">-${pct}%</span>` : ''}</div>
+        </div>
+        ${qty ? `<div class="stepper">
+            <button onclick="setQty('${p.id}','${state.store}',${qty - 1});renderProducts()">−</button><span>${qty}</span>
+            <button onclick="setQty('${p.id}','${state.store}',${qty + 1});renderProducts()">+</button></div>`
+          : `<button class="add" onclick="setQty('${p.id}','${state.store}',1);renderProducts()" aria-label="Añadir">+</button>`}
+      </div>`;
+  }).join('') : `<div class="empty"><div class="big">🔍</div><h3>Sin resultados</h3>${q ? `No hay productos que coincidan con “${state.query}”.` : 'Aún no hay precios de este súper en esta ciudad.'}</div>`;
+}
+
+/* Pestaña 2: mi lista */
+function renderList(pulse){
+  const main = document.getElementById('main');
+  if (!state.cart.length){
+    main.innerHTML = `<div class="empty"><div class="big">🛒</div><h3>Tu lista está vacía</h3>
+      <p style="margin-bottom:18px">Añade productos desde el catálogo de cualquier supermercado.</p>
+      <button class="btn" onclick="goTab('catalog')">Ver supermercados</button></div>`;
+    return;
+  }
+  main.innerHTML = `
+    <div class="section-title">${state.cart.length} productos · ${cartUnits()} unidades</div>
+    ${state.cart.map(i => {
+      const p = P[i.pid], s = STORES[i.sid], pi = priceInfo(i.pid, i.sid, state.city);
+      return `
+        <div class="card li">
+          <div class="prod" style="padding:0;margin:0"><div class="emo">${p.e}</div></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:650;font-size:14.5px">${p.n}</div>
+            <div class="store-line"><span class="logo sm" style="background:${s.color}">${s.name[0]}</span>${s.name} ${pi && pi.offer ? '<span class="tag-offer">OFERTA</span>' : ''}</div>
+            <div class="unit">${pi ? eur(pi.price) + ' / ud.' : '<span class="warn">Sin precio en ' + state.city + '</span>'}</div>
+          </div>
+          <div class="right">
+            <div class="sub">${pi ? eur(pi.price * i.qty) : '—'}</div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <button class="trash" onclick="setQty('${i.pid}','${i.sid}',0);renderList(true)" aria-label="Eliminar">🗑️</button>
+              <div class="stepper">
+                <button onclick="setQty('${i.pid}','${i.sid}',${i.qty - 1});renderList(true)">−</button><span>${i.qty}</span>
+                <button onclick="setQty('${i.pid}','${i.sid}',${i.qty + 1});renderList(true)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('')}
+    <div class="total-bar">
+      <div><small>Total de la compra</small><div class="tot ${pulse ? 'pulse' : ''}">${eur(cartTotal())}</div></div>
+      <button class="btn" style="background:#fff;color:var(--ink)" onclick="goTab('compare')">Comparar 💰</button>
+    </div>`;
+}
+
+/* Pestaña 3: comparador */
+function renderCompare(){
+  const main = document.getElementById('main');
+  if (!state.cart.length){
+    main.innerHTML = `<div class="empty"><div class="big">🏷️</div><h3>Nada que comparar</h3>
+      <p style="margin-bottom:18px">Crea tu lista y calcularemos dónde te sale más barata en ${state.city}.</p>
+      <button class="btn" onclick="goTab('catalog')">Empezar lista</button></div>`;
+    return;
+  }
+  const basket = {}; state.cart.forEach(i => basket[i.pid] = (basket[i.pid] || 0) + i.qty);
+  const pids = Object.keys(basket);
+  const rows = cityStores().map(sid => {
+    let total = 0, offers = 0; const missing = [];
+    for (const pid of pids){ const pi = priceInfo(pid, sid, state.city); if (!pi){ missing.push(P[pid].n); continue; } total += pi.price * basket[pid]; if (pi.offer) offers++; }
+    return { sid, total: r2(total), offers, missing };
+  });
+  const full = rows.filter(r => !r.missing.length).sort((a, b) => a.total - b.total);
+  const partial = rows.filter(r => r.missing.length).sort((a, b) => a.missing.length - b.missing.length || a.total - b.total);
+
+  let head;
+  if (full.length){
+    const best = full[0], worst = full[full.length - 1], s = STORES[best.sid];
+    const saveW = worst.total - best.total;
+    const listOk = state.cart.every(i => priceInfo(i.pid, i.sid, state.city));
+    const current = r2(cartTotal()), saveC = listOk ? current - best.total : 0;
+    head = `
+      <div class="winner">
+        <div class="lbl">🏆 Opción más barata en ${state.city}</div>
+        <div class="row"><div class="logo" style="background:${s.color}">${s.name[0]}</div>
+          <div><h2>${s.name}</h2><div style="font-size:13px;opacity:.9">${pids.length} productos · ${best.offers} en oferta</div></div></div>
+        <div class="big">${eur(best.total)}</div>
+        <div class="save-box">
+          ${full.length > 1 ? `Ahorras <b>${eur(saveW)}</b> (${Math.round(saveW / worst.total * 100)}%) frente a ${STORES[worst.sid].name}.` : 'Es el único súper con precio de todos tus productos.'}
+          ${saveC > 0.009 ? `<br>Y <b>${eur(saveC)}</b> frente a tu lista actual (${eur(current)}).` : listOk ? '<br>✅ Tu lista actual ya está al mejor precio.' : ''}
+        </div>
+        ${saveC > 0.009 ? `<button class="btn" onclick="moveAllTo('${best.sid}')">Pasar mi lista a ${s.name}</button>` : ''}
+      </div>`;
+  } else {
+    head = `<div class="card" style="padding:18px;text-align:center;line-height:1.5">⚠️ Ningún supermercado de ${state.city} tiene precio para todos tus productos todavía.</div>`;
+  }
+  const max = Math.max(1, ...full.map(r => r.total));
+  const logo = st => `<span class="logo sm" style="background:${st.color}">${st.name[0]}</span>`;
+  main.innerHTML = head +
+    (full.length ? `<div class="section-title">Ranking de tu cesta</div>` + full.map((r, idx) => {
+      const st = STORES[r.sid];
+      return `<div class="card rank ${idx === 0 ? 'first' : ''}">
+        <div class="top"><div class="pos">${['🥇','🥈','🥉'][idx] || idx + 1}</div>${logo(st)}<div class="nm">${st.name}</div>
+          <div><div class="amt">${eur(r.total)}</div><div class="diff ${idx === 0 ? 'best' : ''}">${idx === 0 ? 'Más barato' : '+' + eur(r.total - full[0].total)}</div></div></div>
+        <div class="bar"><i style="width:${(r.total / max * 100).toFixed(1)}%;background:${idx === 0 ? 'var(--brand)' : st.color}"></i></div>
+      </div>`; }).join('') : '') +
+    (partial.length ? `<div class="section-title">Con datos incompletos</div>` + partial.map(r => {
+      const st = STORES[r.sid];
+      return `<div class="card rank incomplete">
+        <div class="top"><div class="pos">–</div>${logo(st)}<div class="nm">${st.name}</div><div class="amt">${eur(r.total)}</div></div>
+        <div class="missing">Faltan ${r.missing.length}: ${r.missing.slice(0, 3).join(', ')}${r.missing.length > 3 ? '…' : ''}</div>
+      </div>`; }).join('') : '') +
+    `<p class="note">Misma cesta (${cartUnits()} uds.) en cada súper de ${state.city}, ofertas incluidas.<br>🕒 Precios actualizados: ${fecha(UPDATED)}</p>`;
+}
+function moveAllTo(sid){
+  state.cart.forEach(i => { if (priceInfo(i.pid, sid, state.city)) i.sid = sid; });
+  mergeCart(); save(); render(); toast(`✅ Lista movida a ${STORES[sid].name}`);
+}
+
+/* ===== Utilidades y arranque ===== */
+let tT;
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tT); tT = setTimeout(() => t.classList.remove('show'), 1800); }
+function tick(){ const d = new Date(); document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+
+tick(); setInterval(tick, 30000);
+document.getElementById('main').innerHTML = '<div class="loading">⏳ Cargando precios…</div>';
+loadData()
+  .then(() => { load(); render(); if (!state.city) requestAnimationFrame(() => openCity(true)); })
+  .catch(err => {
+    document.getElementById('main').innerHTML = `<div class="empty"><div class="big">⚠️</div><h3>No se pudieron cargar los precios</h3>
+      <p>${location.protocol === 'file:' ? 'Has abierto el archivo directamente. Ábrelo desde tu web de GitHub Pages.' : err.message}</p></div>`;
+  });
+</script>
+</body>
+</html>
