@@ -1,0 +1,36 @@
+{
+  "supers": {
+    "alimerka":  { "nombre": "Alimerka",  "color": "#2e9d47" },
+    "lupa":      { "nombre": "Lupa",      "color": "#e04e1b" },
+    "mercadona": { "nombre": "Mercadona", "color": "#1d8a3e" },
+    "carrefour": { "nombre": "Carrefour", "color": "#1d5fb5" },
+    "dia":       { "nombre": "Dia",       "color": "#d81e2c" },
+    "alcampo":   { "nombre": "Alcampo",   "color": "#c8102e" },
+    "eroski":    { "nombre": "Eroski",    "color": "#e2231a" },
+    "lidl":      { "nombre": "Lidl",      "color": "#0b4fa8" }
+  },
+  "ciudades": {
+    "Madrid":     { "provincia": "Comunidad de Madrid",  "supers": ["mercadona","carrefour","dia","lidl","alcampo"] },
+    "Barcelona":  { "provincia": "Cataluña",             "supers": ["mercadona","carrefour","dia","lidl","alcampo"] },
+    "Valladolid": { "provincia": "Castilla y León",      "supers": ["alimerka","lupa","mercadona","carrefour","dia","alcampo","eroski","lidl"] },
+    "León":       { "provincia": "Castilla y León",      "supers": ["alimerka","lupa","mercadona","carrefour","dia","eroski","lidl"] },
+    "Oviedo":     { "provincia": "Asturias",             "supers": ["alimerka","lupa","mercadona","carrefour","dia","alcampo","lidl"] },
+    "Gijón":      { "provincia": "Asturias",             "supers": ["alimerka","mercadona","carrefour","dia","alcampo","lidl"] },
+    "Santander":  { "provincia": "Cantabria",            "supers": ["lupa","mercadona","carrefour","dia","eroski","lidl"] },
+    "Bilbao":     { "provincia": "País Vasco",           "supers": ["mercadona","carrefour","dia","eroski","lidl"] },
+    "Valencia":   { "provincia": "Comunitat Valenciana", "supers": ["mercadona","carrefour","dia","alcampo","lidl"] },
+    "Sevilla":    { "provincia": "Andalucía",            "supers": ["mercadona","carrefour","dia","alcampo","lidl"] }
+  },
+  "productos": [
+    { "id": "leche",      "nombre": "Leche entera 1 L",               "emoji": "🥛", "categoria": "Lácteos" },
+    { "id": "yogur",      "nombre": "Yogur natural pack 4",           "emoji": "🥣", "categoria": "Lácteos" },
+    { "id": "huevos",     "nombre": "Huevos L docena",                "emoji": "🥚", "categoria": "Frescos" },
+    { "id": "pollo",      "nombre": "Pechuga de pollo 1 kg",          "emoji": "🍗", "categoria": "Frescos" },
+    { "id": "platano",    "nombre": "Plátano de Canarias 1 kg",       "emoji": "🍌", "categoria": "Fruta y verdura" },
+    { "id": "pan",        "nombre": "Pan de molde integral",          "emoji": "🍞", "categoria": "Despensa" },
+    { "id": "aceite",     "nombre": "Aceite de oliva virgen extra 1 L","emoji": "🫒", "categoria": "Despensa" },
+    { "id": "arroz",      "nombre": "Arroz redondo 1 kg",             "emoji": "🍚", "categoria": "Despensa" },
+    { "id": "macarrones", "nombre": "Macarrones 500 g",               "emoji": "🍝", "categoria": "Despensa" },
+    { "id": "cafe",       "nombre": "Café molido 250 g",              "emoji": "☕", "categoria": "Despensa" }
+  ]
+}
